@@ -4,6 +4,8 @@ package com.munan.studentCourseReg.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "student")
+@SQLDelete(sql = "UPDATE student SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -50,6 +54,8 @@ public class Student implements Serializable {
             joinColumns = { @JoinColumn(name = "student_id") },
             inverseJoinColumns = { @JoinColumn(name = "course_id") })
     private Set<Course> courses = new HashSet<>();
+
+    private boolean deleted = Boolean.FALSE;
 
 
     public void addCourse(Course course_) {

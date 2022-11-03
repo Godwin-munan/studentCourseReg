@@ -73,10 +73,12 @@ public class CourseService {
 
         String code = findCourse.get().getCode();
 
-//        courseRepository.deleteById(findCourse.get().getId());
+        findCourse.get().setDeleted(true);
+        courseRepository.save(findCourse.get());
+        courseRepository.deleteById(course_id);
 
         return ResponseEntity.ok(
-                new HttpResponse<>(HttpStatus.OK.value(), "Dev still in progress", "Unsaved to use for now")
+                new HttpResponse<>(HttpStatus.OK.value(), "Successful", code+" has been deleted")
         );
     }
 }

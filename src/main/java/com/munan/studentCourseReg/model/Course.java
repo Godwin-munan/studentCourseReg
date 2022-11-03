@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +14,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "course")
+@SQLDelete(sql = "UPDATE course SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -38,5 +42,7 @@ public class Course implements Serializable {
                 mappedBy = "courses")
         @JsonIgnore
         private Set<Student> students = new HashSet<>();
+
+        private boolean deleted = Boolean.FALSE;
 }
 
