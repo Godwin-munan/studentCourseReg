@@ -19,12 +19,12 @@ public class GlobalExceptionHandling implements ErrorController {
     private static final String INTERNAL_SERVER_ERROR_MSG = "An error occurred while processing the request";
 
     @ExceptionHandler(AlreadyExistException.class)
-    public ResponseEntity<HttpResponse> alreadyExistException(AlreadyExistException exception) {
+    public ResponseEntity<HttpResponse<?>> alreadyExistException(AlreadyExistException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<HttpResponse> notFoundException(NotFoundException exception) {
+    public ResponseEntity<HttpResponse<?>> notFoundException(NotFoundException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
@@ -46,18 +46,18 @@ public class GlobalExceptionHandling implements ErrorController {
 */
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+    public ResponseEntity<HttpResponse<?>> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
         return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
+    public ResponseEntity<HttpResponse<?>> internalServerErrorException(Exception exception) {
         return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
     }
 
-    private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
-        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
+    private ResponseEntity<HttpResponse<?>> createHttpResponse(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse<>(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message), httpStatus);
     }
 
 }

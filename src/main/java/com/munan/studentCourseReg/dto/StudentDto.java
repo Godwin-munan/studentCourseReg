@@ -1,16 +1,11 @@
 package com.munan.studentCourseReg.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class StudentDto {
 
     private String firstName;
@@ -20,6 +15,8 @@ public class StudentDto {
     private String matric_number;
 
     private Integer age;
+
+    private String password;
 
     private String gender;
 

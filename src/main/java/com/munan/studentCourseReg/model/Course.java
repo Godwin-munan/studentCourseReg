@@ -34,10 +34,9 @@ public class Course implements Serializable {
         @ManyToOne
         private Department department;
 
-        @ManyToMany(fetch = FetchType.EAGER,
+        @ManyToMany(fetch = FetchType.LAZY,
                 cascade = {
-                        CascadeType.PERSIST,
-                        CascadeType.MERGE
+                        CascadeType.ALL
                 },
                 mappedBy = "courses")
         @JsonIgnore

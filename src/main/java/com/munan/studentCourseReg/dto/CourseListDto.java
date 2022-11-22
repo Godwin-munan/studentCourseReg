@@ -1,14 +1,11 @@
 package com.munan.studentCourseReg.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class CourseListDto {
 
     private ArrayList<CourseDto> courses;

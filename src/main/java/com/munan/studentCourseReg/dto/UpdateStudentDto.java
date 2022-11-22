@@ -1,13 +1,13 @@
 package com.munan.studentCourseReg.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import lombok.*;
 
 @NoArgsConstructor
 @Data
-public class Student_courseDto {
+public class UpdateStudentDto {
+
+    private Long id;
 
     private String firstName;
 
@@ -24,7 +24,4 @@ public class Student_courseDto {
     private Integer level;
 
     private String department;
-
-    private ArrayList<CourseDto> courses;
-
 }

@@ -3,33 +3,35 @@ package com.munan.studentCourseReg.service;
 import com.munan.studentCourseReg.dto.DeptDto;
 import com.munan.studentCourseReg.exception.AlreadyExistException;
 import com.munan.studentCourseReg.exception.NotFoundException;
+import com.munan.studentCourseReg.model.Course;
 import com.munan.studentCourseReg.model.Department;
 import com.munan.studentCourseReg.model.Faculty;
+import com.munan.studentCourseReg.model.Student;
+import com.munan.studentCourseReg.repository.CourseRepository;
 import com.munan.studentCourseReg.repository.DepartmentRepository;
 import com.munan.studentCourseReg.repository.FacultyRepository;
+import com.munan.studentCourseReg.repository.StudentRepository;
 import com.munan.studentCourseReg.util.HttpResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
 
+    private final CourseRepository courseRepository;
+    private final StudentRepository studentRepository;
 
-    public ResponseEntity<HttpResponse> addDept(DeptDto deptDto) throws AlreadyExistException, NotFoundException {
+
+    public ResponseEntity<HttpResponse<?>> addDept(DeptDto deptDto) throws AlreadyExistException, NotFoundException {
 
         Optional<Department> findDept = departmentRepository.findByName(deptDto.getName());
 
@@ -40,7 +42,7 @@ public class DepartmentService {
 
         Optional<Faculty> findFaculty = facultyRepository.findByName(deptDto.getFaculty());
 
-        if(!findFaculty.isPresent())
+        if(findFaculty.isEmpty())
         {
             throw new NotFoundException(deptDto.getFaculty()+" faculty does not exist");
         }
@@ -50,49 +52,55 @@ public class DepartmentService {
         newDept.setFaculty(findFaculty.get());
 
         return ResponseEntity.ok(
-                new HttpResponse(HttpStatus.OK.value(), "Successful", departmentRepository.save(newDept))
+                new HttpResponse<>(HttpStatus.OK.value(), "Successful", departmentRepository.save(newDept))
         );
     }
 
-    public ResponseEntity<HttpResponse> getAllDepartments() {
+    public ResponseEntity<HttpResponse<?>> getAllDepartments() {
 
         return ResponseEntity.ok(
-                new HttpResponse(HttpStatus.OK.value(), "Successful", departmentRepository.findAll())
+                new HttpResponse<>(HttpStatus.OK.value(),"Successful", departmentRepository.findAll())
         );
     }
 
-    public ResponseEntity<HttpResponse> getDeptById(Long id) throws NotFoundException {
+    public ResponseEntity<HttpResponse<?>> getDeptById(Long id) throws NotFoundException {
 
         Optional<Department> findDept = departmentRepository.findById(id);
 
-        if(!findDept.isPresent())
+        if(findDept.isEmpty())
         {
             throw new NotFoundException("Record for id "+id+" is not found");
         }
 
         return ResponseEntity.ok(
-                new HttpResponse(HttpStatus.OK.value(), "Successful", findDept.get())
+                new HttpResponse<>(HttpStatus.OK.value(), "Successful", findDept.get())
         );
     }
 
-    public ResponseEntity<HttpResponse> deleteDeptById(Long id) throws NotFoundException {
+    public ResponseEntity<HttpResponse<?>> deleteDeptById(Long id) throws NotFoundException, AlreadyExistException {
 
         Optional<Department> findDept = departmentRepository.findById(id);
 
-        if(!findDept.isPresent())
+        if(findDept.isEmpty())
         {
             throw new NotFoundException("Record for id "+id+" does not exist");
         }
 
+        Optional<Student> studentByDept = studentRepository.findByDepartment_Id(id).stream().findFirst();
+        Optional<Course>  courseByDept = courseRepository.findByDepartment_id(id).stream().findFirst();
+
+        if(studentByDept.isPresent() || courseByDept.isPresent()){
+            throw new AlreadyExistException("Can not delete this record, because it is reference in another table");
+        }
         String name = findDept.get().getName();
         departmentRepository.delete(findDept.get());
 
         return  ResponseEntity.ok(
-                new HttpResponse(HttpStatus.OK.value(), "Successful", name+" department successfully deleted")
+                new HttpResponse<>(HttpStatus.OK.value(), "Successful", name+" department successfully deleted")
         );
     }
 
-    public ResponseEntity<HttpResponse> updateDept(DeptDto deptDto)
+    public ResponseEntity<HttpResponse<?>> updateDept(DeptDto deptDto)
     {
         Optional<Faculty> findDept = facultyRepository.findByName(deptDto.getFaculty());
 
@@ -102,7 +110,7 @@ public class DepartmentService {
         updateDept.setFaculty(findDept.get());
 
         return  ResponseEntity.ok(
-                new HttpResponse(HttpStatus.OK.value(), "Successful", departmentRepository.save(updateDept))
+                new HttpResponse<>(HttpStatus.OK.value(), "Successful", departmentRepository.save(updateDept))
         );
     }
 }

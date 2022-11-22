@@ -1,25 +1,19 @@
 package com.munan.studentCourseReg.service;
 
-import com.sun.mail.smtp.SMTPTransport;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import java.util.Date;
 import java.util.Properties;
-
 import static com.munan.studentCourseReg.constants.EmailConstant.*;
 import static javax.mail.Message.RecipientType.CC;
 import static javax.mail.Message.RecipientType.TO;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EmailService {
 
 

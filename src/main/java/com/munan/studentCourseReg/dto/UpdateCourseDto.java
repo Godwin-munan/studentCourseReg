@@ -1,11 +1,12 @@
 package com.munan.studentCourseReg.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @Data
-public class CourseDto {
+public class UpdateCourseDto {
+
+    private Long id;
 
     private String name;
 
