@@ -13,7 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.net.URI;
 import java.util.Optional;
+
+import static com.munan.studentCourseReg.constants.URI_Constant.getURL;
 
 @Service
 @Transactional
@@ -22,6 +25,8 @@ public class GenderService {
 
     private final GenderRepository genderRepository;
     private final StudentRepository studentRepository;
+
+    private static final String baseRoute = "/api/gender";
 
     public  ResponseEntity<HttpResponse<?>> updateGender(Gender gender) {
 
@@ -49,7 +54,7 @@ public class GenderService {
         Gender savedGender = genderRepository.save(newGender);
 
         return ResponseEntity.ok(
-                new HttpResponse<>(HttpStatus.OK.value(), "successfully added "
+                new HttpResponse<>(HttpStatus.CREATED.value(), "successfully added "
                         +savedGender.getType()+" gender", savedGender)
         );
     }
@@ -77,6 +82,8 @@ public class GenderService {
 
 //        Optional<Gender> findGender1 = genderRepository.findById(id);
 
+
+//        URI uri = getURL(baseRoute+"/delete/deleteById/"+id);
 
         return  ResponseEntity.ok(
            new HttpResponse<>(HttpStatus.OK.value(), "Successful", "record with id "+id+

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.munan.studentCourseReg.constants.URI_Constant.getURL;
 
 
 @Service
@@ -48,6 +51,8 @@ public class StudentService{
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private static final String baseRoute = "/api/student";
 
     //Email validation method
     public boolean emailValidator(String email)
@@ -150,8 +155,9 @@ public class StudentService{
 
             emailService.sendEmailToStudent(savedStudent.getFirstName(), savedStudent.getEmail());
 
-            return ResponseEntity.ok(
-                    new HttpResponse<>(HttpStatus.OK.value(), "Successful", studentRepository.save(savedStudent))
+            URI uri = getURL(baseRoute+"/add/newStudent");
+            return ResponseEntity.created(uri).body(
+                    new HttpResponse<>(HttpStatus.CREATED.value(), "Successful", studentRepository.save(savedStudent))
             );
 
     }
@@ -249,7 +255,10 @@ public class StudentService{
         {
             throw new NotFoundException("Student with id " +studentId+" not found");
         }
-        return ResponseEntity.ok(
+
+        URI uri = getURL(baseRoute+"/add/{student_id}/courses");
+
+        return ResponseEntity.created(uri).body(
                 new HttpResponse<>(HttpStatus.OK.value(), "Successful", updateStudent)
         );
     }

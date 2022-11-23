@@ -24,13 +24,13 @@ public class UserController {
 
     @Operation(summary = "Add Role", description = "Add new Role")
     @PostMapping("/add/role")
-    public ResponseEntity<HttpResponse> addRole(@RequestBody Role role) throws AlreadyExistException {
+    public ResponseEntity<HttpResponse<?>> addRole(@RequestBody Role role) throws AlreadyExistException {
         return userService.addRole(role);
     }
 
     @Operation(summary = "Register User", description = "Register new User")
     @PostMapping("/register")
-    public ResponseEntity<HttpResponse> register(@RequestBody AppUser user) throws AlreadyExistException {
+    public ResponseEntity<HttpResponse<?>> register(@RequestBody AppUser user) throws AlreadyExistException {
         return userService.register(user);
     }
 
