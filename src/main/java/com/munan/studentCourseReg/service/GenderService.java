@@ -51,11 +51,11 @@ public class GenderService {
         Gender newGender = new Gender();
         newGender.setType(gender.getType().toLowerCase());
 
-        Gender savedGender = genderRepository.save(newGender);
+        URI uri = getURL(baseRoute+"/add/addGender");
 
-        return ResponseEntity.ok(
+        return ResponseEntity.created(uri).body(
                 new HttpResponse<>(HttpStatus.CREATED.value(), "successfully added "
-                        +savedGender.getType()+" gender", savedGender)
+                        +gender.getType()+" gender", genderRepository.save(newGender))
         );
     }
 

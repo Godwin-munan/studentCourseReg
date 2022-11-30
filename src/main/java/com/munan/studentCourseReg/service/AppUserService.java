@@ -1,7 +1,6 @@
 package com.munan.studentCourseReg.service;
 
-import com.munan.studentCourseReg.dto.AuthRequestDto;
-import com.munan.studentCourseReg.dto.AuthResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.munan.studentCourseReg.exception.AlreadyExistException;
 import com.munan.studentCourseReg.exception.NotFoundException;
 import com.munan.studentCourseReg.model.AppUser;
@@ -13,20 +12,23 @@ import com.munan.studentCourseReg.util.HttpResponse;
 import com.munan.studentCourseReg.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-
+import org.springframework.util.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.net.URI;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import static com.munan.studentCourseReg.constants.URI_Constant.getURL;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service
 @Transactional
@@ -38,7 +40,6 @@ public class AppUserService {
 
     private final PasswordEncoder passwordEncoder;
     private final MyUserDetailService userDetailService;
-    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     //COMMAND LINE METHOD
@@ -104,28 +105,64 @@ public class AppUserService {
     }
 
 
-    public ResponseEntity<HttpResponse<?>> createAuthToken(AuthRequestDto requestDto) throws NotFoundException {
+    //CREATE NEW TOKEN USING REFRESH TOKEN
+    public void createAuthToken(HttpServletRequest request, HttpServletResponse response) throws NotFoundException, IOException {
+
+        String authorizationHeader = request.getHeader("Authorization");
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> error = new HashMap<>();
+        String jwtToken = null;
+        String username = null;
+        String issuer = null;
+
+        response.setContentType(APPLICATION_JSON_VALUE);
 
         try{
-            UsernamePasswordAuthenticationToken token =
-                    new UsernamePasswordAuthenticationToken(
-                        requestDto.getEmail(), requestDto.getPassword()
-                    );
-            authenticationManager.authenticate(token);
+            if(StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer")){
+
+                jwtToken = authorizationHeader.split(" ")[1].trim();
+                username = jwtUtil.extractUsername(jwtToken);
+                issuer = jwtUtil.extractIssuer(jwtToken);
+            }else {
+                throw new Exception("Invalid Token");
+            }
         }catch (Exception e){
-            throw new NotFoundException(e.getMessage());
+            response.setStatus(SC_BAD_REQUEST);
+            error.put("error",e.getMessage());
+            System.out.println(e.getMessage());
+            mapper.writeValue(response.getOutputStream(), error);
         }
 
-        final UserDetails userDetails = userDetailService
-                .loadUserByUsername(requestDto.getEmail());
 
-        String jwt = jwtUtil.generateToken(userDetails);
+        if(username != null && Objects.equals(issuer, "/api/auth/authenticate")){
 
-        AuthResponseDto responseDto = new AuthResponseDto(jwt, "JWT token");
+            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+
+            try{
+                if(jwtUtil.validateToken(jwtToken)){
+                    String access_token = jwtUtil.generateToken(userDetails);
+
+                    response.setHeader("access_token", access_token);
+
+                    Map<String, String> token = new HashMap<>();
+                    token.put("access_token", access_token);
 
 
-        return ResponseEntity.ok(
-                new HttpResponse<>(HttpStatus.OK.value(), "Successful", responseDto)
-        );
+
+                    response.setContentType(APPLICATION_JSON_VALUE);
+                    mapper.writeValue(response.getOutputStream(), token);
+                }
+            }catch (Exception e){
+                response.setStatus(SC_BAD_REQUEST);
+                response.setHeader("error", e.getMessage());
+                error.put("error",e.getMessage());
+                System.out.println(e.getMessage());
+                mapper.writeValue(response.getOutputStream(), error);
+            }
+        }
+
+
     }
+
 }
+

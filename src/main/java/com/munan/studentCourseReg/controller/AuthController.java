@@ -2,20 +2,15 @@ package com.munan.studentCourseReg.controller;
 
 import com.munan.studentCourseReg.dto.AuthRequestDto;
 import com.munan.studentCourseReg.exception.NotFoundException;
-import com.munan.studentCourseReg.security.MyUserDetailService;
 import com.munan.studentCourseReg.service.AppUserService;
-import com.munan.studentCourseReg.util.HttpResponse;
-import com.munan.studentCourseReg.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,7 +22,13 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     @Operation(summary = "Authenticate ", description = "Authenticate to get JWT token")
-    public ResponseEntity<HttpResponse<?>> createAuthToken(@RequestBody AuthRequestDto requestDto) throws NotFoundException {
-        return userService.createAuthToken(requestDto);
+    public void createAuthToken(@RequestBody AuthRequestDto requestDto) throws NotFoundException {
+//        return userService.createAuthToken(requestDto);
+    }
+
+    @GetMapping("/refresh")
+    @Operation(summary = "Refresh", description = "Refresh to get JWT token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws NotFoundException, IOException {
+         userService.createAuthToken(request, response);
     }
 }
