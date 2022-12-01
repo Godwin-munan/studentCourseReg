@@ -13,6 +13,8 @@ import com.munan.studentCourseReg.repository.FacultyRepository;
 import com.munan.studentCourseReg.repository.StudentRepository;
 import com.munan.studentCourseReg.util.HttpResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,10 +58,12 @@ public class DepartmentService {
         );
     }
 
-    public ResponseEntity<HttpResponse<?>> getAllDepartments() {
+    public ResponseEntity<HttpResponse<?>> getAllDepartments(Integer page, Integer size, String field) {
 
         return ResponseEntity.ok(
-                new HttpResponse<>(HttpStatus.OK.value(),"Successful", departmentRepository.findAll())
+                new HttpResponse<>(HttpStatus.OK.value(),
+                        "Successful",
+                        departmentRepository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.ASC, field))))
         );
     }
 

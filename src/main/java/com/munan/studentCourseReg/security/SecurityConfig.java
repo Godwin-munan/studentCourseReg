@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static com.munan.studentCourseReg.constants.URI_Constant.AUTH_URL;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -49,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           jwtUtil
         );
 
-        customeAuthFilter.setFilterProcessesUrl("/api/auth/authenticate");
+        customeAuthFilter.setFilterProcessesUrl(AUTH_URL);
 
         http.csrf().disable()
                 .exceptionHandling()

@@ -44,10 +44,12 @@ public class StudentController {
     }
 
     @Operation(summary = "Get all Students", description = "Get List of all students")
-    @GetMapping("/get/getAll")
-    public ResponseEntity<HttpResponse<?>> getStudents()
+    @GetMapping("/get/getAll/{page}/{size}/{field}")
+    public ResponseEntity<HttpResponse<?>> getStudents(@PathVariable("page") Integer page,
+                                                       @PathVariable("size") Integer size,
+                                                       @PathVariable("field") String field)
     {
-        return studentService.getStudents();
+        return studentService.getStudents(field, page, size);
     }
 
     @Operation(summary = "Get all Students of a Course", description = "Get List of all Students belonging to one Course")

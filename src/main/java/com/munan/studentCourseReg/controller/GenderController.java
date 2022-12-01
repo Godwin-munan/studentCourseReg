@@ -27,9 +27,10 @@ public class GenderController extends GlobalExceptionHandling {
         return genderService.addGender(gender);
     }
 
-    @Operation(summary = "Get all genders", description = "Get all existing genders")
+    @Operation(summary = "Get all genders", description = "Get all existing genders with sorted field")
     @GetMapping("/get/getAll")
-    public ResponseEntity<HttpResponse<?>> getAll(){ return genderService.getAllGender();}
+    public ResponseEntity<HttpResponse<?>> getAll() { return genderService.getAllGender();}
+
 
     @Operation(summary = "Delete existing gender", description = "Delete existing gender by id")
     @DeleteMapping("/delete/deleteById/{id}")

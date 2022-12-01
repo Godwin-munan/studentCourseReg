@@ -22,8 +22,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.munan.studentCourseReg.constants.SecurityConstant.*;
+import static com.munan.studentCourseReg.constants.URI_Constant.AUTH_URL;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class CustomeAuthFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        UsernamePasswordAuthenticationToken token = null;
+        UsernamePasswordAuthenticationToken token;
         Authentication authentication = null;
 
 
@@ -61,6 +62,7 @@ public class CustomeAuthFilter extends UsernamePasswordAuthenticationFilter {
 
         } catch (Exception e) {
             logger.error(e.getMessage());
+            response.setStatus(SC_BAD_REQUEST);
             jwtAuthEntryPoint.commence(request, response, new AuthenticationException(e.getMessage()){});
         }
         return authentication;
@@ -76,7 +78,7 @@ public class CustomeAuthFilter extends UsernamePasswordAuthenticationFilter {
         String access_token = jwtUtil.generateToken(userDetails);
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("iss", "/api/auth/authenticate");
+        claims.put("iss", AUTH_URL);
 
         String refresh_token = Jwts.builder().setClaims(claims).setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

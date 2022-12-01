@@ -27,8 +27,12 @@ public class DepartmentController extends GlobalExceptionHandling {
     }
 
     @Operation(summary = "Get Department", description = "Get all Department")
-    @GetMapping("/get/getAll")
-    public ResponseEntity<HttpResponse<?>> getAll(){ return departmentService.getAllDepartments();}
+    @GetMapping("/get/getAll/{page}/{size}/{field}")
+    public ResponseEntity<HttpResponse<?>> getAll(@PathVariable("page") Integer page,
+                                                  @PathVariable("size") Integer size,
+                                                  @PathVariable("field") String field){
+        return departmentService.getAllDepartments(page, size, field);
+    }
 
     @Operation(summary = "Get by ID", description = "Get single department by id")
     @GetMapping("/get/getById/{id}")

@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.munan.studentCourseReg.constants.URI_Constant.AUTH_URL;
 import static com.munan.studentCourseReg.constants.URI_Constant.getURL;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -134,7 +136,7 @@ public class AppUserService {
         }
 
 
-        if(username != null && Objects.equals(issuer, "/api/auth/authenticate")){
+        if(username != null && Objects.equals(issuer, AUTH_URL)){
 
             UserDetails userDetails = userDetailService.loadUserByUsername(username);
 

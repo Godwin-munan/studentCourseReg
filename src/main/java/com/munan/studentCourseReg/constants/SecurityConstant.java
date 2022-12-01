@@ -10,6 +10,6 @@ public class SecurityConstant {
 
     public final static Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public static  Integer EXPIRATION = 1000 * 60 + 10;
+    public static  Integer EXPIRATION = 1000 * 60 * 10;
     public static Integer RE_EXPIRATION = 1000 * 60 * 60;
 }

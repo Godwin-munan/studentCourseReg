@@ -26,10 +26,11 @@ public class CourseController {
     }
 
     @Operation(summary = "Get Course", description = "Get all courses")
-    @GetMapping("/get/getAll")
-    public ResponseEntity<HttpResponse<?>> getCourses()
-    {
-        return courseService.getCourses();
+    @GetMapping("/get/getAll/{page}/{size}/{field}")
+    public ResponseEntity<HttpResponse<?>> getCourses(@PathVariable("page") Integer page,
+                                                      @PathVariable("size") Integer size,
+                                                      @PathVariable("field") String field) {
+        return courseService.getCourses(field, page, size);
     }
 
     @Operation(summary = "Get all Courses of a Student", description = "Get List of all courses belonging to one student")

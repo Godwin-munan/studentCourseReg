@@ -8,6 +8,11 @@ import com.munan.studentCourseReg.repository.GenderRepository;
 import com.munan.studentCourseReg.repository.StudentRepository;
 import com.munan.studentCourseReg.util.HttpResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +32,8 @@ public class GenderService {
     private final StudentRepository studentRepository;
 
     private static final String baseRoute = "/api/gender";
+
+    private Logger logger = LoggerFactory.getLogger(GenderService.class);
 
     public  ResponseEntity<HttpResponse<?>> updateGender(Gender gender) {
 
@@ -60,8 +67,12 @@ public class GenderService {
     }
 
     public ResponseEntity<HttpResponse<?>> getAllGender() {
+        logger.info("Successful");
+
         return ResponseEntity.ok(
-                new HttpResponse<>(HttpStatus.OK.value(), "successfully added ", genderRepository.findAll())
+                new HttpResponse<>(
+                        HttpStatus.OK.value(),
+                        "successful", genderRepository.findAll())
         );
     }
 
@@ -91,4 +102,5 @@ public class GenderService {
         );
 
     }
+
 }

@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static com.munan.studentCourseReg.constants.URI_Constant.AUTH_URL;
+import static com.munan.studentCourseReg.constants.URI_Constant.REFRESH_URL;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
@@ -36,7 +39,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if(request.getServletPath().equals("/api/auth/authenticate") || request.getServletPath().equals("/api/auth/refresh")){
+        if(request.getServletPath().equals(AUTH_URL) || request.getServletPath().equals(REFRESH_URL)){
             filterChain.doFilter(request, response);
 
         }else {
@@ -65,8 +68,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     jwtAuthEntryPoint.commence(request, response, new AuthenticationException("Bad Credentials on Jwt"){});
                 }catch (MalformedJwtException e){
                     logger.error(e.getMessage());
-                    response.setHeader("error", "Bad Credentials on Jwt");
-                    jwtAuthEntryPoint.commence(request, response, new AuthenticationException("Catch me if you can"){});
+                    response.setHeader("error", "Bad Token");
+                    jwtAuthEntryPoint.commence(request, response, new AuthenticationException("Bad Token"){});
                 }
                 catch (Exception e  ){
                     logger.error(e.getMessage());

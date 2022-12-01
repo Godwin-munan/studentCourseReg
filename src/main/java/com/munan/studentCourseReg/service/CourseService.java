@@ -11,6 +11,8 @@ import com.munan.studentCourseReg.repository.DepartmentRepository;
 import com.munan.studentCourseReg.repository.StudentRepository;
 import com.munan.studentCourseReg.util.HttpResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -58,10 +60,12 @@ public class CourseService {
         );
     }
 
-    public ResponseEntity<HttpResponse<?>> getCourses() {
+    public ResponseEntity<HttpResponse<?>> getCourses(String field, Integer page, Integer size) {
 
         return ResponseEntity.ok(
-                new HttpResponse<>(HttpStatus.OK.value(), "Successful", courseRepository.findAll())
+                new HttpResponse<>(HttpStatus.OK.value(),
+                        "Successful",
+                        courseRepository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.ASC, field))))
         );
     }
 
