@@ -3,7 +3,6 @@ package com.munan.studentCourseReg.controller;
 import com.munan.studentCourseReg.dto.*;
 import com.munan.studentCourseReg.exception.AlreadyExistException;
 import com.munan.studentCourseReg.exception.NotFoundException;
-import com.munan.studentCourseReg.model.Course;
 import com.munan.studentCourseReg.service.StudentService;
 import com.munan.studentCourseReg.util.HttpResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.mail.MessagingException;
 
 @RestController

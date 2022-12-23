@@ -141,7 +141,7 @@ public class StudentService{
             Optional<Role> roles = roleRepository.findByName("ROLE_USER");
 
             if (roles.isEmpty()) {
-                roles =  Optional.ofNullable(roleRepository.save(new Role(null, "ROLE_USER")));
+                roles =  Optional.of(roleRepository.save(new Role(null, "ROLE_USER")));
             }
             roles.ifPresent(role -> {
                 AppUser newUser = new AppUser();
@@ -269,7 +269,7 @@ public class StudentService{
 
         return ResponseEntity.ok(
                 new HttpResponse<>(HttpStatus.OK.value(), "Successful",
- studentRepository.findAll(PageRequest.of(page,size).withSort(Sort.by(Sort.Direction.ASC, field))))
+                studentRepository.findAll(PageRequest.of(page,size).withSort(Sort.by(Sort.Direction.ASC, field))))
         );
     }
 

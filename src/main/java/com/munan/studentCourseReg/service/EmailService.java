@@ -26,18 +26,17 @@ public class EmailService {
 //    }
 
 
-    public  Message sendEmailToStudent(String firstName, String email) throws MessagingException {
+    public void sendEmailToStudent(String firstName, String email) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(TO, InternetAddress.parse(email, false));
         message.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(EMAIL_SUBJECT);
-        message.setText("Hello " + firstName + ", \n \n Your registration is: " +"The Support Team");
+        message.setText("Hello " + firstName + ", \n \n Your registration is successful \n" +"The Support Team Kaban University ");
         message.setSentDate(new Date());
         message.saveChanges();
 
-
-        return message;
+        System.out.println("MESSAGE SAVED AND READY TO SEND");
     }
 
     private static Session getEmailSession() {
@@ -53,5 +52,7 @@ public class EmailService {
                 return new PasswordAuthentication(USERNAME,PASSWORD);
             }
         });
+
+
     }
 }

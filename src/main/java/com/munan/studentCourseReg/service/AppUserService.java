@@ -2,7 +2,6 @@ package com.munan.studentCourseReg.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.munan.studentCourseReg.exception.AlreadyExistException;
-import com.munan.studentCourseReg.exception.NotFoundException;
 import com.munan.studentCourseReg.model.AppUser;
 import com.munan.studentCourseReg.model.Role;
 import com.munan.studentCourseReg.repository.AppUserRepository;
@@ -12,7 +11,6 @@ import com.munan.studentCourseReg.util.HttpResponse;
 import com.munan.studentCourseReg.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +23,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static com.munan.studentCourseReg.constants.URI_Constant.AUTH_URL;
 import static com.munan.studentCourseReg.constants.URI_Constant.getURL;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service
@@ -43,6 +40,7 @@ public class AppUserService {
     private final PasswordEncoder passwordEncoder;
     private final MyUserDetailService userDetailService;
     private final JwtUtil jwtUtil;
+
 
     //COMMAND LINE METHOD
     public void commandLine(Role role, AppUser user) throws AlreadyExistException {
@@ -86,6 +84,7 @@ public class AppUserService {
                 .body(new HttpResponse<>(HttpStatus.CREATED.value(), "Successful", userRepository.save(newUser)));
     }
 
+    //PRIVATE FIND USER METHOD
     private AppUser findUser(AppUser user) throws AlreadyExistException {
         Optional<AppUser> findUser = userRepository.findByUsername(user.getUsername());
 
@@ -108,9 +107,9 @@ public class AppUserService {
 
 
     //CREATE NEW TOKEN USING REFRESH TOKEN
-    public void createAuthToken(HttpServletRequest request, HttpServletResponse response) throws NotFoundException, IOException {
+    public void createAuthToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> error = new HashMap<>();
         String jwtToken = null;
